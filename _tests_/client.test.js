@@ -156,3 +156,70 @@ it("recover account from keystore", async () => {
   expect(res.address).toBeTruthy()
   expect(res.privateKey).toBeTruthy()
 })
+
+it("recover account from legacy (sha256) keystore", async () => {
+  const client = await getClient(false, true)
+  const res = client.recoverAccountFromKeystore(
+    keystores.legacy,
+    "12345qwert!S"
+  )
+  expect(res.address).toBeTruthy()
+  expect(res.privateKey).toBeTruthy()
+})
+
+it("recover account from bad mac keystore", async () => {
+  const client = await getClient(false, true)
+  expect(() => {
+    client.recoverAccountFromKeystore(keystores.badMac, "12345qwert!S")
+  }).toThrowError()
+})
+
+it("recover account from mneomnic", async () => {
+  jest.setTimeout(50000)
+  const client = await getClient(false)
+  const res = client.recoverAccountFromMneomnic(mnemonic)
+  await 1500
+  expect(res.address).toBeTruthy()
+  expect(res.privateKey).toBeTruthy()
+})
+
+it("recover account from privatekey", async () => {
+  jest.setTimeout(50000)
+  const client = await getClient(false)
+  const pk = crypto.generatePrivateKey()
+  const res = client.recoverAccountFromPrivateKey(pk)
+  await 1500
+  expect(res.address).toBeTruthy()
+  expect(res.privateKey).toBeTruthy()
+})
+
+it("get balance", async () => {
+  const client = await getClient(false)
+  const res = await client.getBalance(targetAddress)
+  expect(res.length).toBeGreaterThanOrEqual(0)
+})
+
+it("get swaps", async () => {
+  const client = await getClient(false)
+  const swapID =
+    "4dd95fadfb6c064dcb99234301bf22978ade9ad49ca7a4c708305c8fea6549d8"
+  let res = await client.getSwapByID(swapID)
+  expect(res.status).toBe(200)
+  console.log(res)
+
+  res = await client.getSwapByCreator(
+    "tbnb1hgm0p7khfk85zpz5v0j8wnej3a90w709zzlffd",
+    10,
+    0
+  )
+  expect(res.status).toBe(200)
+  console.log(res)
+
+  res = await client.getSwapByRecipient(
+    "tbnb1prrujx8kkukrcrppklggadhuvegfnx8pemsq77",
+    10,
+    0
+  )
+  expect(res.status).toBe(200)
+  console.log(res)
+})
