@@ -223,3 +223,60 @@ it("get swaps", async () => {
   expect(res.status).toBe(200)
   console.log(res)
 })
+
+it("works with a custom signing delegate", async () => {
+  const client = await getClient(true)
+  const addr = crypto.getAddressFromPrivateKey(client.privateKey)
+  const account = await client._httpClient.request(
+    "get",
+    `/api/v1/account/${addr}`
+  )
+  const sequence = account.result && account.result.sequence
+
+  client.setSigningDelegate((tx, signMsg) => {
+    expect(tx instanceof Transaction).toBeTruthy()
+    expect(!tx.signatures.length).toBeTruthy()
+    expect(signMsg.inputs.length).toBeTruthy()
+    return tx
+  })
+
+  try {
+    await client.transfer(
+      addr,
+      targetAddress,
+      0.00000001,
+      "BNB",
+      "hello world",
+      sequence
+    )
+  } catch (err) {
+    // will throw because a signature was not added by the signing delegate.
+  }
+})
+
+it("works with a custom broadcast delegate", async () => {
+  const client = await getClient(true)
+  const addr = crypto.getAddressFromPrivateKey(client.privateKey)
+  const account = await client._httpClient.request(
+    "get",
+    `/api/v1/account/${addr}`
+  )
+  const sequence = account.result && account.result.sequence
+
+  client.setBroadcastDelegate(signedTx => {
+    expect(signedTx instanceof Transaction).toBeTruthy()
+    expect(signedTx.signatures.length).toBeTruthy()
+    return "broadcastDelegateResult"
+  })
+
+  const res = await client.transfer(
+    addr,
+    targetAddress,
+    0.00000001,
+    "BNB",
+    "hello world",
+    sequence
+  )
+  expect(res).toBe("broadcastDelegateResult")
+})
+
