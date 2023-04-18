@@ -1,6 +1,3 @@
-# javascript-sdk
-Javascript SDK to communicate with Binance Chain.
-
 # Binance Chain JavaScript SDK
 
 The Binance Chain JavaScript SDK allows browsers and node.js clients to interact with Binance Chain. It includes the following core components:
