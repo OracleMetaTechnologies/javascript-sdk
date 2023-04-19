@@ -16,3 +16,18 @@ tests-ledger/buffer-polyfill.js
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 # See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+/vendor
+/node_modules
+
+# go cache
+/.cache
+
+# testing
+/coverage
+
+# production
+/build
+
+# build result
