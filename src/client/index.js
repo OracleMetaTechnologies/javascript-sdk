@@ -372,4 +372,78 @@ export class BncClient {
     return this._broadcastDelegate(signedTx)
   }
 
-  
+  /**
+   * Cancel an order.
+   * @param {String} fromAddress
+   * @param {String} symbol the market pair
+   * @param {String} refid the order ID of the order to cancel
+   * @param {Number} sequence optional sequence
+   * @return {Promise} resolves with response (success or fail)
+   */
+  async cancelOrder(fromAddress, symbol, refid, sequence = null) {
+    const accCode = crypto.decodeAddress(fromAddress)
+
+    const msg = {
+      sender: accCode,
+      symbol: symbol,
+      refid: refid,
+      msgType: "CancelOrderMsg"
+    }
+
+    const signMsg = {
+      refid: refid,
+      sender: fromAddress,
+      symbol: symbol
+    }
+
+    const signedTx = await this._prepareTransaction(msg, signMsg, fromAddress, sequence, "")
+    return this._broadcastDelegate(signedTx)
+  }
+
+  /**
+   * Place an order.
+   * @param {String} address
+   * @param {String} symbol the market pair
+   * @param {Number} side (1-Buy, 2-Sell)
+   * @param {Number} price
+   * @param {Number} quantity
+   * @param {Number} sequence optional sequence
+   * @param {Number} timeinforce (1-GTC(Good Till Expire), 3-IOC(Immediate or Cancel))
+   * @return {Promise} resolves with response (success or fail)
+   */
+  async placeOrder(address = this.address, symbol, side, price, quantity, sequence = null, timeinforce = 1) {
+    if (!address) {
+      throw new Error("address should not be falsy")
+    }
+    if (!symbol) {
+      throw new Error("symbol should not be falsy")
+    }
+    if (side !== 1 && side !== 2) {
+      throw new Error("side can only be 1 or 2")
+    }
+    if (timeinforce !== 1 && timeinforce !== 3) {
+      throw new Error("timeinforce can only be 1 or 3")
+    }
+
+    const accCode = crypto.decodeAddress(address)
+
+    if (sequence !== 0 && !sequence) {
+      const data = await this._httpClient.request("get", `${api.getAccount}/${address}`)
+      sequence = data.result && data.result.sequence
+    }
+
+    const bigPrice = new Big(price)
+    const bigQuantity = new Big(quantity)
+
+    const placeOrderMsg = {
+      sender: accCode,
+      id: `${accCode.toString("hex")}-${sequence + 1}`.toUpperCase(),
+      symbol: symbol,
+      ordertype: 2,
+      side,
+      price: parseFloat(bigPrice.mul(BASENUMBER).toString(), 10),
+      quantity: parseFloat(bigQuantity.mul(BASENUMBER).toString(), 10),
+      timeinforce: timeinforce,
+      msgType: "NewOrderMsg",
+    }
+    
