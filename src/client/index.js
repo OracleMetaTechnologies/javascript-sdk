@@ -265,4 +265,60 @@ export class BncClient {
       msgType: "MsgSend"
     }
 
+   const signMsg = {
+      inputs: [{
+        address: fromAddress,
+        coins: [{
+          amount: amount,
+          denom: asset
+        }]
+      }],
+      outputs: [{
+        address: toAddress,
+        coins: [{
+          amount: amount,
+          denom: asset
+        }]
+      }]
+    }
+
+    const signedTx = await this._prepareTransaction(msg, signMsg, fromAddress, sequence, memo)
+    return this._broadcastDelegate(signedTx)
+  }
+
+  /**
+   * Create and sign a multi send tx
+   * @param {String} fromAddress
+   * @param {Array} outputs
+   * @example
+   * const outputs = [
+   * {
+   *   "to": "tbnb1p4kpnj5qz5spsaf0d2555h6ctngse0me5q57qe",
+   *   "coins": [{
+   *     "denom": "BNB",
+   *     "amount": 10
+   *   },{
+    *     "denom": "BTC",
+    *     "amount": 10
+    *   }]
+   * },
+   * {
+   *   "to": "tbnb1scjj8chhhp7lngdeflltzex22yaf9ep59ls4gk",
+   *   "coins": [{
+   *     "denom": "BTC",
+   *     "amount": 10
+   *   },{
+    *     "denom": "BNB",
+    *     "amount": 10
+    *   }]
+   * }]
+   * @param {String} memo optional memo
+   * @param {Number} sequence optional sequence
+   * @return {Promise} resolves with response (success or fail)
+   */
+  async multiSend(fromAddress, outputs, memo = "", sequence = null) {
+    if (!fromAddress) {
+      throw new Error("fromAddress should not be falsy")
+    }
+    
     
