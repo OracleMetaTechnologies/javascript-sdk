@@ -180,4 +180,44 @@ export class BncClient {
     return this
   }
 
+  /**
+   * Sets the client's account number.
+   * @param {boolean} accountNumber
+   */
+  setAccountNumber(accountNumber) {
+    this.account_number = accountNumber
+  }
+
+  /**
+   * Use async broadcast mode. Broadcasts faster with less guarantees (default off)
+   * @param {Boolean} useAsyncBroadcast
+   * @return {BncClient} this instance (for chaining)
+   */
+  useAsyncBroadcast(useAsyncBroadcast = true) {
+    this._useAsyncBroadcast = useAsyncBroadcast
+    return this
+  }
+
+  /**
+   * Sets the signing delegate (for wallet integrations).
+   * @param {function} delegate
+   * @return {BncClient} this instance (for chaining)
+   */
+  setSigningDelegate(delegate) {
+    if (typeof delegate !== "function") throw new Error("signing delegate must be a function")
+    this._signingDelegate = delegate
+    return this
+  }
+
+  /**
+   * Sets the broadcast delegate (for wallet integrations).
+   * @param {function} delegate
+   * @return {BncClient} this instance (for chaining)
+   */
+  setBroadcastDelegate(delegate) {
+    if (typeof delegate !== "function") throw new Error("broadcast delegate must be a function")
+    this._broadcastDelegate = delegate
+    return this
+  }
+
   
