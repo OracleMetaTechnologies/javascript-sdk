@@ -143,3 +143,41 @@ export class BncClient {
     }
     return this
   }
+
+  /**
+   * Sets the client network (testnet or mainnet).
+   * @param {String} network Indicate testnet or mainnet
+   */
+  chooseNetwork(network) {
+    this.addressPrefix = NETWORK_PREFIX_MAPPING[network] || "tbnb"
+    this.network = NETWORK_PREFIX_MAPPING[network] ? network : "testnet"
+  }
+
+  /**
+   * Sets the client's private key for calls made by this client. Asynchronous.
+   * @param {string} privateKey the private key hexstring
+   * @param {boolean} localOnly set this to true if you will supply an account_number yourself via `setAccountNumber`. Warning: You must do that if you set this to true!
+   * @return {Promise}
+   */
+  async setPrivateKey(privateKey, localOnly = false) {
+    if (privateKey !== this.privateKey) {
+      const address = crypto.getAddressFromPrivateKey(privateKey, this.addressPrefix)
+      if (!address) throw new Error(`address is falsy: ${address}. invalid private key?`)
+      if (address === this.address) return this // safety
+      this.privateKey = privateKey
+      this.address = address
+      if (!localOnly) {
+        // _setPkPromise is used in _sendTransaction for non-await calls
+        try {
+          const promise = this._setPkPromise = this._httpClient.request("get", `${api.getAccount}/${address}`)
+          const data = await promise
+          this.account_number = data.result.account_number
+        } catch (e) {
+          throw new Error(`unable to query the address on the blockchain. try sending it some funds first: ${address}`)
+        }
+      }
+    }
+    return this
+  }
+
+  
