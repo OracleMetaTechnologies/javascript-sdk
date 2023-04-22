@@ -75,3 +75,36 @@ export const LedgerSigningDelegate = (ledgerApp, preSignCb, postSignCb, errCb, h
   }
   return tx
 }
+
+/**
+ * validate the input number.
+ * @param {Array} outputs
+ */
+const checkOutputs = (outputs) => {
+  outputs.forEach(transfer => {
+    const coins = transfer.coins || []
+    coins.forEach(coin => {
+      checkNumber(coin.amount)
+      if (!coin.denom) {
+        throw new Error("invalid denmon")
+      }
+    })
+  })
+}
+
+/**
+ * sum corresponding input coin
+ * @param {Array} inputs
+ * @param {Array} coins
+ */
+const calInputCoins = (inputs, coins) => {
+  coins.forEach((coin) => {
+    const existCoin = inputs[0].coins.find(c => c.denom === coin.denom)
+    if (existCoin) {
+      const existAmount = new Big(existCoin.amount)
+      existCoin.amount = Number(existAmount.plus(coin.amount).toString())
+    } else {
+      inputs[0].coins.push({ ...coin })
+    }
+  })
+}
