@@ -321,4 +321,55 @@ export class BncClient {
       throw new Error("fromAddress should not be falsy")
     }
     
-    
+    if (!Array.isArray(outputs)) {
+      throw new Error("outputs should be array")
+    }
+
+    checkOutputs(outputs)
+
+    //sort denom by alphbet and init amount
+    outputs.forEach(item => {
+      item.coins = item.coins.sort((a, b) => a.denom.localeCompare(b.denom))
+      item.coins.forEach(coin => {
+        const amount = new Big(coin.amount)
+        coin.amount = Number(amount.mul(BASENUMBER).toString())
+      })
+    })
+
+    const fromAddrCode = crypto.decodeAddress(fromAddress)
+    const inputs = [{ address: fromAddrCode, coins: [] }]
+    const transfers = []
+
+    outputs.forEach((item) => {
+      const toAddcCode = crypto.decodeAddress(item.to)
+      calInputCoins(inputs, item.coins)
+      transfers.push({ address: toAddcCode, coins: item.coins })
+    })
+
+    const msg = {
+      inputs,
+      outputs: transfers,
+      msgType: "MsgSend"
+    }
+
+    const signInputs = [{ address: fromAddress, coins: [] }]
+    const signOutputs = []
+
+    outputs.forEach((item, index) => {
+      signOutputs.push({ address: item.to, coins: [] })
+      item.coins.forEach(c => {
+        signOutputs[index].coins.push(c)
+      })
+      calInputCoins(signInputs, item.coins)
+    })
+
+    const signMsg = {
+      inputs: signInputs,
+      outputs: signOutputs
+    }
+
+    const signedTx = await this._prepareTransaction(msg, signMsg, fromAddress, sequence, memo)
+    return this._broadcastDelegate(signedTx)
+  }
+
+  
