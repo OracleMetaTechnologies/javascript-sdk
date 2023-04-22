@@ -108,3 +108,38 @@ const calInputCoins = (inputs, coins) => {
     }
   })
 }
+
+/**
+ * The Binance Chain client.
+ */
+export class BncClient {
+  /**
+   * @param {String} server Binance Chain public url
+   * @param {Boolean} useAsyncBroadcast use async broadcast mode, faster but less guarantees (default off)
+   * @param {Number} source where does this transaction come from (default 0)
+   */
+  constructor(server, useAsyncBroadcast = false, source = 0) {
+    if (!server) {
+      throw new Error("Binance chain server should not be null")
+    }
+    this._httpClient = new HttpRequest(server)
+    this._signingDelegate = DefaultSigningDelegate
+    this._broadcastDelegate = DefaultBroadcastDelegate
+    this._useAsyncBroadcast = useAsyncBroadcast
+    this._source = source
+    this.tokens = new TokenManagement(this)
+    this.swap = new Swap(this)
+    this.gov = new Gov(this)
+  }
+
+  /**
+   * Initialize the client with the chain's ID. Asynchronous.
+   * @return {Promise}
+   */
+  async initChain() {
+    if (!this.chainId) {
+      const data = await this._httpClient.request("get", api.nodeInfo)
+      this.chainId = data.result.node_info && data.result.node_info.network
+    }
+    return this
+  }
