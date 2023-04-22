@@ -220,4 +220,13 @@ export class BncClient {
     return this
   }
 
+   /**
+   * Applies the default signing delegate.
+   * @return {BncClient} this instance (for chaining)
+   */
+  useDefaultSigningDelegate() {
+    this._signingDelegate = DefaultSigningDelegate
+    return this
+  }
+  
   
