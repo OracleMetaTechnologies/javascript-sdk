@@ -229,4 +229,40 @@ export class BncClient {
     return this
   }
   
-  
+  /**
+   * Transfer tokens from one address to another.
+   * @param {String} fromAddress
+   * @param {String} toAddress
+   * @param {Number} amount
+   * @param {String} asset
+   * @param {String} memo optional memo
+   * @param {Number} sequence optional sequence
+   * @return {Promise} resolves with response (success or fail)
+   */
+  async transfer(fromAddress, toAddress, amount, asset, memo = "", sequence = null) {
+    const accCode = crypto.decodeAddress(fromAddress)
+    const toAccCode = crypto.decodeAddress(toAddress)
+
+    amount = new Big(amount)
+    amount = Number(amount.mul(BASENUMBER).toString())
+
+    checkNumber(amount, "amount")
+
+    const coin = {
+      denom: asset,
+      amount: amount,
+    }
+
+    const msg = {
+      inputs: [{
+        address: accCode,
+        coins: [coin]
+      }],
+      outputs: [{
+        address: toAccCode,
+        coins: [coin]
+      }],
+      msgType: "MsgSend"
+    }
+
+    
