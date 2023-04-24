@@ -228,3 +228,11 @@ QUnit.module("INS_SHOW_ADDR_SECP256K1", {
     }
   }
 })
+
+test("status code is 0x9000", function(assert) {
+  assert.equal(response.return_code, 0x9000, "Status code is 0x9000")
+})
+
+//#endregion
+
+//#region INS_SHOW_ADDR_SECP256K1 (other account)
