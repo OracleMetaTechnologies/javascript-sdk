@@ -94,3 +94,23 @@ test("app has matching version", function(assert) {
   assert.ok(response.major === EXPECTED_VERSION_MAJOR, "Passed")
   assert.ok(response.minor === EXPECTED_VERSION_MINOR, "Passed")
 })
+
+//#endregion
+
+//#region PUBLIC_KEY_SECP256K1
+
+QUnit.module("PUBLIC_KEY_SECP256K1", {
+  before: async function() {
+    response = {} // clear
+    try {
+      const hdPath = [44, 714, 0, 0, 0]
+      response = await app.getPublicKey(hdPath)
+      console.log(response)
+    } catch (err) {
+      console.error(
+        "Error invoking PUBLIC_KEY_SECP256K1. Please connect it and open the app.",
+        err
+      )
+    }
+  }
+})
