@@ -236,3 +236,23 @@ test("status code is 0x9000", function(assert) {
 //#endregion
 
 //#region INS_SHOW_ADDR_SECP256K1 (other account)
+
+QUnit.module("INS_SHOW_ADDR_SECP256K1 - other account", {
+  before: async function() {
+    response = {} // clear
+    try {
+      const hdPath = [44, 714, 714, 0, 714]
+      response = await app.showAddress("bnb", hdPath)
+      console.log(response)
+    } catch (err) {
+      console.error(
+        "Error invoking INS_SHOW_ADDR_SECP256K1. Please connect it and open the app.",
+        err
+      )
+    }
+  }
+})
+
+test("status code is 0x9000", function(assert) {
+  assert.equal(response.return_code, 0x9000, "Status code is 0x9000")
+})
