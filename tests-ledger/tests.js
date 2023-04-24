@@ -532,3 +532,30 @@ QUnit.module("SIGN_SECP256K1 - good cancel tx", {
     }
   }
 })
+
+test("status code is 0x9000", function(assert) {
+  assert.equal(response.return_code, 0x9000, "Status code is 0x9000")
+})
+
+test("has property signature", function(assert) {
+  assert.ok(response.signature !== undefined, "Passed")
+})
+
+test("signature size is within range 64-65", function(assert) {
+  assert.ok(
+    64 <= response.signature.length && response.signature.length <= 65,
+    "Passed"
+  )
+})
+
+test("signature passes verification", function(assert) {
+  const sig = response.signature
+  assert.ok(
+    crypto.verifySignature(
+      sig,
+      Buffer.from(cancelSignBytes, "utf8").toString("hex"),
+      pubKey.toString("hex")
+    ),
+    "Signature OK"
+  )
+})
