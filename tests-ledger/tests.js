@@ -279,3 +279,11 @@ QUnit.module("INS_SHOW_ADDR_SECP256K1 - bad account path", {
     }
   }
 })
+
+test("did throw an error", function(assert) {
+  assert.ok(badAccountErrored, "Passed")
+})
+
+test("status code is 0x6984", function(assert) {
+  assert.equal(badAccountErrCode, 0x6984, "Status code is 0x6984")
+})
