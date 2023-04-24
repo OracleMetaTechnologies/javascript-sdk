@@ -70,3 +70,10 @@ QUnit.module("GET_VERSION", {
   }
 })
 
+test("status code is 0x9000", function(assert) {
+  assert.equal(response.return_code, 0x9000, "Status code is 0x9000")
+})
+
+test("has property test_mode", function(assert) {
+  assert.ok(response.test_mode !== undefined, "Passed")
+})
