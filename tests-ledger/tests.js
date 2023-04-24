@@ -51,3 +51,22 @@ QUnit.begin(async function() {
 })
 
 //#endregion
+
+//#region GET_VERSION
+
+QUnit.module("GET_VERSION", {
+  before: async function() {
+    response = {} // clear
+    try {
+      const version = await app.getVersion()
+      response = version
+      console.log(response)
+    } catch (err) {
+      console.error(
+        "Error invoking GET_VERSION. Please connect it and open the app.",
+        err
+      )
+    }
+  }
+})
+
