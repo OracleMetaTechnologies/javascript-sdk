@@ -85,3 +85,12 @@ test("has property major", function(assert) {
 test("has property minor", function(assert) {
   assert.ok(response.minor !== undefined, "Passed")
 })
+
+test("has property patch", function(assert) {
+  assert.ok(response.patch !== undefined, "Passed")
+})
+
+test("app has matching version", function(assert) {
+  assert.ok(response.major === EXPECTED_VERSION_MAJOR, "Passed")
+  assert.ok(response.minor === EXPECTED_VERSION_MINOR, "Passed")
+})
