@@ -134,3 +134,7 @@ test("pk is prefixed with 0x04", function(assert) {
   assert.equal(response.pk[0], 0x04, "Passed")
 })
 
+// the 0x9000 suffix was being incorrectly appended, this test checks that it's not there now
+test("pk does not end in 0x9000", function(assert) {
+  assert.notOk(response.pk.toString("hex").endsWith("9000"), "Passed")
+})
