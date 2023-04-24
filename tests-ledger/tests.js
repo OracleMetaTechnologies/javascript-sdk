@@ -138,3 +138,23 @@ test("pk is prefixed with 0x04", function(assert) {
 test("pk does not end in 0x9000", function(assert) {
   assert.notOk(response.pk.toString("hex").endsWith("9000"), "Passed")
 })
+
+//#endregion
+
+//#region PUBLIC_KEY_SECP256K1 (bad hdPath throws #1)
+
+let badPkErrored, badPkErrorMsg, badPkErrorCode
+QUnit.module("PUBLIC_KEY_SECP256K1 - bad path 1", {
+  before: async function() {
+    response = {} // clear
+    try {
+      const hdPath = [44, 714, 0] // too short
+      response = await app.getPublicKey(hdPath)
+      badPkErrored = false
+    } catch (err) {
+      badPkErrored = true
+      badPkErrorMsg = err.message
+      badPkErrorCode = err.statusCode
+    }
+  }
+})
