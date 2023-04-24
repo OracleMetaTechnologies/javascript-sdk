@@ -158,3 +158,15 @@ QUnit.module("PUBLIC_KEY_SECP256K1 - bad path 1", {
     }
   }
 })
+
+test("did throw an error", function(assert) {
+  assert.ok(badPkErrored, "Passed")
+})
+
+test("error message is 'Ledger device: UNKNOWN_ERROR (0x6984)'", function(assert) {
+  assert.equal(
+    badPkErrorMsg,
+    "Ledger device: UNKNOWN_ERROR (0x6984)",
+    "Error message is 'Ledger device: UNKNOWN_ERROR (0x6984)'"
+  )
+})
