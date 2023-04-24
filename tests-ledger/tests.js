@@ -506,3 +506,29 @@ test("signature passes verification", function(assert) {
     "Signature OK"
   )
 })
+
+//#endregion
+
+//#region SIGN_SECP256K1 (cancel order tx)
+
+// this tx msg follows the BNC structure (no fee, + source and data)
+// eslint-disable-next-line quotes
+const cancelSignBytes = `{"account_number":"1","chain_id":"Binance-Chain-Test","data":null,"memo":"MEMO","msgs":[{"refid":"B71E119324558ABA3AE3F5BC854F1225132465A0-0","sender":"tbnb1hlly02l6ahjsgxw9wlcswnlwdhg4xhx3f309d9","symbol":"BTC-0AB_BNB"}],"sequence":"2","source":"1"}`
+QUnit.module("SIGN_SECP256K1 - good cancel tx", {
+  before: async function() {
+    response = {} // clear
+    try {
+      const hdPathSign = [44, 714, 0, 0, 0]
+      const pkResp = await app.getPublicKey(hdPathSign) // sets the last "viewed" hd path on the device
+      await app.showAddress("bnb", hdPathSign)  // prime the device with this hd path
+      response = await app.sign(cancelSignBytes, hdPathSign)
+      pubKey = pkResp.pk
+      console.log(response)
+    } catch (err) {
+      console.error(
+        "Error invoking SIGN_SECP256K1. Please connect it and open the app.",
+        err
+      )
+    }
+  }
+})
