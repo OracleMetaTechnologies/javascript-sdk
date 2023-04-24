@@ -170,3 +170,11 @@ test("error message is 'Ledger device: UNKNOWN_ERROR (0x6984)'", function(assert
     "Error message is 'Ledger device: UNKNOWN_ERROR (0x6984)'"
   )
 })
+
+test("status code is 0x6984", function(assert) {
+  assert.equal(badPkErrorCode, 0x6984, "Status code is 0x6984")
+})
+
+//#endregion
+
+//#region PUBLIC_KEY_SECP256K1 (bad hdPath throws #2)
