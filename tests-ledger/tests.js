@@ -77,3 +77,11 @@ test("status code is 0x9000", function(assert) {
 test("has property test_mode", function(assert) {
   assert.ok(response.test_mode !== undefined, "Passed")
 })
+
+test("has property major", function(assert) {
+  assert.ok(response.major !== undefined, "Passed")
+})
+
+test("has property minor", function(assert) {
+  assert.ok(response.minor !== undefined, "Passed")
+})
