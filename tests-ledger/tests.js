@@ -635,3 +635,15 @@ QUnit.module("SIGN_SECP256K1 - bad tx content", {
     }
   }
 })
+
+test("did throw an error", function(assert) {
+  assert.ok(badTxErrored, "Passed")
+})
+
+test("status code is 0x6A80", function(assert) {
+  assert.equal(badTxErrorCode, 0x6a80, "Status code is 0x6A80")
+})
+
+test("does not have property signature", function(assert) {
+  assert.ok(response.signature === undefined, "Passed")
+})
