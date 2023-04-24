@@ -611,3 +611,27 @@ test("signature passes verification", function(assert) {
     "Signature OK"
   )
 })
+
+//#endregion
+
+//#region SIGN_SECP256K1 (bad tx throws)
+
+let badTxErrored, badTxErrorCode
+QUnit.module("SIGN_SECP256K1 - bad tx content", {
+  before: async function() {
+    response = {} // clear
+    try {
+      // INCORRECT JSON in this tx (data is before chain_id, which is not the correct sort order.)
+      // eslint-disable-next-line quotes
+      const signBytes = `{"account_number":1,"data":"ABCD","chain_id":"bnbchain","memo":"smiley!☺","msgs":["msg"],"sequence":1,"source":1}`
+      response = {}
+      const hdPathSign = [44, 714, 0, 0, 0]
+      await app.showAddress("bnb", hdPathSign)  // prime the device with this hd path
+      response = await app.sign(signBytes, hdPathSign)
+      badTxErrored = false
+    } catch (err) {
+      badTxErrored = true
+      badTxErrorCode = err.statusCode
+    }
+  }
+})
