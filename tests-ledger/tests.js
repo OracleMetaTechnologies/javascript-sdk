@@ -178,3 +178,21 @@ test("status code is 0x6984", function(assert) {
 //#endregion
 
 //#region PUBLIC_KEY_SECP256K1 (bad hdPath throws #2)
+
+QUnit.module("PUBLIC_KEY_SECP256K1 - bad path 2", {
+  before: async function() {
+    response = {} // clear
+    try {
+      const hdPath = [44, 714, 0, 1, 0] // `change` node must be 0
+      response = await app.getPublicKey(hdPath)
+      badPkErrored = false
+    } catch (err) {
+      badPkErrored = true
+      badPkErrorMsg = err.message
+    }
+  }
+})
+
+test("did throw an error", function(assert) {
+  assert.ok(badPkErrored, "Passed")
+})
