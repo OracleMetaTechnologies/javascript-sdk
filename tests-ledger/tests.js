@@ -208,3 +208,23 @@ test("error message is 'Ledger device: UNKNOWN_ERROR (0x6984)'", function(assert
 test("status code is 0x6984", function(assert) {
   assert.equal(badPkErrorCode, 0x6984, "Status code is 0x6984")
 })
+
+//#endregion
+
+//#region INS_SHOW_ADDR_SECP256K1 (index 0)
+
+QUnit.module("INS_SHOW_ADDR_SECP256K1", {
+  before: async function() {
+    response = {} // clear
+    try {
+      const hdPath = [44, 714, 0, 0, 0]
+      response = await app.showAddress("bnb", hdPath)
+      console.log(response)
+    } catch (err) {
+      console.error(
+        "Error invoking INS_SHOW_ADDR_SECP256K1. Please connect it and open the app.",
+        err
+      )
+    }
+  }
+})
