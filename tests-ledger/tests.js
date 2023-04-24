@@ -647,3 +647,46 @@ test("status code is 0x6A80", function(assert) {
 test("does not have property signature", function(assert) {
   assert.ok(response.signature === undefined, "Passed")
 })
+
+//#endregion
+
+//#region SIGN_SECP256K1 (sign with different, vs the viewed, hd path throws)
+
+let badSignHdPathErrored, badSignHdPathErrorCode
+QUnit.module("SIGN_SECP256K1 - different prior hd path", {
+  before: async function() {
+    response = {} // clear
+    try {
+      // this tx msg is a real BNC TX (no fee, with source and data)
+      // eslint-disable-next-line quotes
+      const signBytes = `{"account_number":"12","chain_id":"bnbchain","data":null,"memo":"smiley!☺","msgs":[{"id":"BA36F0FAD74D8F41045463E4774F328F4AF779E5-4","ordertype":2,"price":1612345678,"quantity":123456,"sender":"bnc1hgm0p7khfk85zpz5v0j8wnej3a90w7098fpxyh","side":1,"symbol":"NNB-338_BNB","timeinforce":3}],"sequence":"3","source":"1"}`
+      const hdPathView = [44, 714, 1, 0, 0]
+      await app.showAddress("bnb", hdPathView)  // prime the device with this hd path
+      const hdPathSign = [44, 714, 0, 0, 0]
+      response = await app.sign(signBytes, hdPathSign)
+      console.log(response)
+      badSignHdPathErrored = false
+    } catch (err) {
+      badSignHdPathErrored = true
+      badSignHdPathErrorCode = err.statusCode
+      console.error(
+        "Error invoking SIGN_SECP256K1. Please connect it and open the app.",
+        err
+      )
+    }
+  }
+})
+
+test("did throw an error", function(assert) {
+  assert.ok(badSignHdPathErrored, "Passed")
+})
+
+test("status code is 0x6984", function(assert) {
+  assert.equal(badSignHdPathErrorCode, 0x6984, "Status code is 0x6984")
+})
+
+test("does not have property signature", function(assert) {
+  assert.ok(response.signature === undefined, "Passed")
+})
+
+//#endregion
