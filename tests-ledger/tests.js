@@ -122,3 +122,15 @@ test("status code is 0x9000", function(assert) {
 test("has property pk", function(assert) {
   assert.ok(response.pk !== undefined, "Passed")
 })
+
+test("pk is the correct size", function(assert) {
+  assert.equal(response.pk.length, 1 + 64, "Passed") // 1 byte PK prefix
+})
+
+// the 0x04 prefix represents an uncompressed pubkey
+// https://github.com/libbitcoin/libbitcoin-system/wiki/Elliptic-Curve-Operations#point-operations-on-the-elliptic-curve
+test("pk is prefixed with 0x04", function(assert) {
+  console.log("device public key:", response.pk.toString("hex"))
+  assert.equal(response.pk[0], 0x04, "Passed")
+})
+
