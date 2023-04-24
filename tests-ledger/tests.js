@@ -256,3 +256,26 @@ QUnit.module("INS_SHOW_ADDR_SECP256K1 - other account", {
 test("status code is 0x9000", function(assert) {
   assert.equal(response.return_code, 0x9000, "Status code is 0x9000")
 })
+
+//#endregion
+
+//#region INS_SHOW_ADDR_SECP256K1 (bad account path)
+
+let badAccountErrored, badAccountErrCode
+QUnit.module("INS_SHOW_ADDR_SECP256K1 - bad account path", {
+  before: async function() {
+    response = {} // clear
+    try {
+      const hdPath = [44, 714, 0, 1, 714]
+      response = await app.showAddress("bnb", hdPath)
+      console.log(response)
+    } catch (err) {
+      badAccountErrored = true
+      badAccountErrCode = err.statusCode
+      console.error(
+        "Error invoking INS_SHOW_ADDR_SECP256K1. Please connect it and open the app.",
+        err
+      )
+    }
+  }
+})
